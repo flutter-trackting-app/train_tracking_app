@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:train_tracking_app/sign_up_page.dart';
 import 'login_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -37,6 +36,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -44,43 +46,48 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 100),
-                    child: const Image(
-                      image: AssetImage(
-                        'assets/images/tta_logo.png',
-                      ),
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[900],
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.normal),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                width: screenWidth,
+                height: screenHeight * 0.8,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 100),
+                      child: const Image(
+                        image: AssetImage(
+                          'assets/images/tta_logo.png',
                         ),
+                        // width: 200,
+                        height: 70,
+                        fit: BoxFit.cover,
                       ),
-                      child: const Text("Get started"),
                     ),
-                  )
-                ],
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.normal),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text("Get started"),
+                      ),
+                    )
+                  ],
+                ),
               ),
             )
           ],
