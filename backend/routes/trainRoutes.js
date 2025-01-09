@@ -1,8 +1,11 @@
 const express = require('express');
-const { getAllTrains, getTrainById, createTrain, updateTrainById, deleteTrainById } = require('../controllers/trainController');
+const { getAllTrains, getTrainById, createTrain, updateTrainById, deleteTrainById, getAllNotifications } = require('../controllers/trainController');
 const { authenticateToken, allowAdminOnly, allowUserOnly } = require('../middleware/authMiddleware');
 
 const router = express.Router();
+
+// Route to get all notifications
+router.get('/notifications', authenticateToken, getAllNotifications);
 
 // Route to get all trains
 router.get('/', authenticateToken, getAllTrains);
