@@ -3,13 +3,13 @@ const { db } = require("../models/firebase");
 const jwt = require("jsonwebtoken");
 
 // Generate JWT Token
-const generateToken = (uid) => {
-  return jwt.sign({ uid }, process.env.SECRET_KEY, { expiresIn: "1h" });
+const generateToken = (uid, userRole) => {
+  return jwt.sign({ uid, userRole }, process.env.SECRET_KEY, { expiresIn: "1h" });
 };
 
 // Register a new user
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { userName, email, password, userRole } = req.body;
 
   try {
     // Check if email already exists
@@ -31,14 +31,15 @@ const registerUser = async (req, res) => {
     const userId = newUserRef.key;
     await newUserRef.set({
       uid: userId,
-      username,
+      userName,
       email,
       password,
+      userRole,
     });
 
     res.status(201).json({
       message: "User registered successfully",
-      user: { uid: userId, username, email },
+      user: { uid: userId, userName, email, userRole },
     });
   } catch (error) {
     res.status(400).json({
@@ -77,15 +78,16 @@ const loginUser = async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken(userData.uid);
+    const token = generateToken(userData.uid, userData.userRole);
 
     res.status(200).json({
       message: "Login successful",
       token,
       user: {
         uid: userData.uid,
-        username: userData.username,
+        userName: userData.userName,
         email: userData.email,
+        userRole: userData.userRole,
       },
     });
   } catch (error) {
