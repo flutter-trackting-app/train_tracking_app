@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:train_tracking_app/homepage.dart';
+import 'package:train_tracking_app/services/auth_service.dart';
 import 'package:train_tracking_app/sign_up_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -163,33 +164,61 @@ class LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      const hardcodedEmail = "username";
-                      const hardcodedPassword = "123";
+                    onPressed: () async {
+                      // const hardcodedEmail = "username";
+                      // const hardcodedPassword = "123";
 
                       if (formKey.currentState?.validate() ?? false) {
-                        if (emailController.text == hardcodedEmail &&
-                            passwordController.text == hardcodedPassword) {
+                        final authService = AuthService();
+                        final response = await authService.signIn(
+                            emailController.text.trim(),
+                            passwordController.text.trim());
+
+                        if (response["success"]) {
                           Fluttertoast.showToast(
-                            msg: "Login Successful",
+                            msg: "Sign In Successful",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
                             backgroundColor: Colors.green,
                             textColor: Colors.white,
                           );
-                          Navigator.push(
+
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => HomePage()),
                           );
                         } else {
                           Fluttertoast.showToast(
-                            msg: "Invalid username or password",
+                            msg: response["message"] ?? "Signin failed",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
                           );
                         }
+
+                        // if (emailController.text == hardcodedEmail &&
+                        //     passwordController.text == hardcodedPassword) {
+                        //   Fluttertoast.showToast(
+                        //     msg: "Login Successful",
+                        //     toastLength: Toast.LENGTH_SHORT,
+                        //     gravity: ToastGravity.BOTTOM,
+                        //     backgroundColor: Colors.green,
+                        //     textColor: Colors.white,
+                        //   );
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(builder: (context) => HomePage()),
+                        //   );
+                        // } else {
+                        //   Fluttertoast.showToast(
+                        //     msg: "Invalid username or password",
+                        //     toastLength: Toast.LENGTH_SHORT,
+                        //     gravity: ToastGravity.BOTTOM,
+                        //     backgroundColor: Colors.red,
+                        //     textColor: Colors.white,
+                        //   );
+                        // }
                       } else {
                         Fluttertoast.showToast(
                           msg: "Please enter valid credentials",

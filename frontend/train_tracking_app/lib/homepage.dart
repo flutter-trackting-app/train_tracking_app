@@ -56,9 +56,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Homepage'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Homepage'),
+      // ),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: trainSchedules.length,
