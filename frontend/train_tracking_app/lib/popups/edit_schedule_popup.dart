@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:train_tracking_app/services/schedule_service.dart';
 
-class AddSchedulePopup extends StatefulWidget {
-  const AddSchedulePopup({super.key});
+class EditSchedulePopup extends StatefulWidget {
+  const EditSchedulePopup({super.key});
 
   @override
   AddTrainPopupState createState() => AddTrainPopupState();
 }
 
-class AddTrainPopupState extends State<AddSchedulePopup> {
+class AddTrainPopupState extends State<EditSchedulePopup> {
   final ScheduleService _trainService = ScheduleService();
   final _formKey = GlobalKey<FormState>();
 

@@ -1,49 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:train_tracking_app/notifications_page.dart';
 import 'package:train_tracking_app/popups/add_schedule_popup.dart';
+import 'package:train_tracking_app/services/schedule_service.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  HomePageState createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final List<Map<String, String>> trainSchedules = [
-    {
-      'name': 'Express Line 1',
-      'startTime': '08:00 AM',
-      'endTime': '10:00 AM',
-      'estimatedDeparture': '07:45 AM',
-      'delayed': "true",
-      'delay_time': "15 min"
-    },
-    {
-      'name': 'Rapid Transit',
-      'startTime': '09:30 AM',
-      'endTime': '11:30 AM',
-      'estimatedDeparture': '09:15 AM',
-      'delayed': "true",
-      'delay_time': "30 min"
-    },
-    {
-      'name': 'City Connector',
-      'startTime': '12:00 PM',
-      'endTime': '02:00 PM',
-      'estimatedDeparture': '11:45 AM',
-      'delayed': "false",
-      'delay_time': "0"
-    },
-    {
-      'name': 'Sunrise Express',
-      'startTime': '05:00 PM',
-      'endTime': '07:00 PM',
-      'estimatedDeparture': '04:45 PM',
-      'delayed': "true",
-      'delay_time': "10 min"
-    },
-  ];
+  List<Map<String, dynamic>> trainSchedules = [];
+
+  Future<void> fetchSchedules() async {
+    final scheduleService = ScheduleService();
+    final response = await scheduleService.getSchedules();
+    await Future.delayed(Duration(seconds: 1));
+
+    if (response["success"]) {
+      List<dynamic> schedules = response["data"];
+      setState(() {
+        print("Setting schedules...");
+        trainSchedules = [
+          {
+            "delay_time": 16,
+            "delayed": "true",
+            "departureTime": "11.00pm",
+            "destination": "kandy",
+            "distance": 50,
+            "id": "-OGAYVK7aMIF32HEJNMO",
+            "name": "train2",
+            "origin": "mathara"
+          },
+          {
+            "delay_time": 50,
+            "delayed": "true",
+            "departureTime": "5.00pm",
+            "destination": "colombo",
+            "distance": 30,
+            "id": "-OGAcqQmaz7N4UidhHOw",
+            "name": "train1",
+            "origin": "galle"
+          },
+          {
+            "delay_time": "15",
+            "delayed": "true",
+            "departureTime": "08:00 AM",
+            "destination": "North Point",
+            "distance": "120",
+            "id": "-OGD0hsd5LEXk6YOQoj7",
+            "name": "Express Line 1",
+            "origin": "Central Station"
+          },
+          {
+            "delay_time": "",
+            "delayed": "false",
+            "departureTime": "8.00 AM",
+            "destination": "matara",
+            "distance": "10",
+            "id": "-OGD48MrtYCh8ZP60yR3",
+            "name": "test",
+            "origin": "galle"
+          },
+          {
+            "delay_time": "30",
+            "delayed": "true",
+            "departureTime": "10.00 AM",
+            "destination": "colombo",
+            "distance": "20",
+            "id": "-OGDMUu0C4g2kVr41iqh",
+            "name": "train 2",
+            "origin": "matara"
+          }
+        ];
+        // trainSchedules = schedules.map((schedule) {
+        //   return {
+        //     'name': schedule['name'],
+        //     'startTime': schedule['departureTime'],
+        //     'endTime': 'N/A',
+        //     'estimatedDeparture': schedule['departureTime'],
+        //     'delayed': schedule['delayed'],
+        //     'delay_time': schedule['delay_time'].toString(),
+        //   };
+        // }).toList();
+      });
+    } else {
+      Fluttertoast.showToast(
+        msg: response["message"] ?? "Operation failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
 
   Future<SharedPreferences> getLocalStorage() async {
     return SharedPreferences.getInstance();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSchedules();
   }
 
   @override
@@ -187,7 +251,10 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: 20,
+                    child: Text(trainSchedules.length.toString()),
+                  ),
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
