@@ -106,6 +106,7 @@ const updateTrainById = async (req, res) => {
       const notificationsRef = db.ref("notifications");
       await notificationsRef.push({
         trainId: id,
+        trainName: currentData.name,
         previousDelayTime: currentData.delay_time,
         newDelayTime: delay_time,
         timestamp: new Date().toISOString(),
