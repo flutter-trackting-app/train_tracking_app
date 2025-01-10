@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:train_tracking_app/notifications_page.dart';
 import 'package:train_tracking_app/popups/add_schedule_popup.dart';
+import 'package:train_tracking_app/popups/edit_schedule_popup.dart';
 import 'package:train_tracking_app/services/schedule_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,11 +18,12 @@ class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<dynamic> trainSchedules = [];
+  late Timer _timer;
 
   Future<List<dynamic>> fetchSchedules() async {
     final scheduleService = ScheduleService();
     final response = await scheduleService.getSchedules();
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (response["success"]) {
       List<dynamic> schedules = response["data"];
@@ -40,15 +43,22 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Fetch the schedules asynchronously
     _loadSchedules();
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer t) {
+      _loadSchedules();
+    });
   }
 
-  // Function to load the schedules
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
   Future<void> _loadSchedules() async {
     List<dynamic> schedules = await fetchSchedules();
     setState(() {
-      trainSchedules = schedules; // Update trainSchedules with the fetched data
+      trainSchedules = schedules;
     });
   }
 
@@ -197,9 +207,8 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
-                    child: Text(trainSchedules.length.toString()),
                   ),
                   Expanded(
                     child: ListView.builder(
@@ -240,7 +249,7 @@ class HomePageState extends State<HomePage> {
                                               ),
                                               const SizedBox(width: 5),
                                               Text(
-                                                train['delay_time'].toString()!,
+                                                '${train['delay_time'].toString()!} min',
                                                 style: const TextStyle(
                                                     color: Colors.redAccent),
                                               ),
@@ -266,6 +275,38 @@ class HomePageState extends State<HomePage> {
                                 //   'End Time: ${train['endTime']}',
                                 //   style: const TextStyle(color: Colors.grey),
                                 // ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                userRole == "admin"
+                                    ? SizedBox(
+                                        child: ElevatedButton(
+                                          child: Text(
+                                            'Edit',
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue,
+                                            foregroundColor: Colors.white,
+                                            textStyle: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.normal),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  EditSchedulePopup(
+                                                      trainId: train['id']),
+                                            );
+                                          },
+                                        ),
+                                        width: double.infinity,
+                                      )
+                                    : const SizedBox()
                               ],
                             ),
                           ),

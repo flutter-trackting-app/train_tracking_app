@@ -63,4 +63,61 @@ class ScheduleService {
       };
     }
   }
+
+  Future<Map<String, dynamic>> updateTrain(
+      String trainId, Map<String, String> updatedData) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.put(
+      Uri.parse("$apiUrl/$trainId"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '$token',
+      },
+      body: json.encode(updatedData),
+    );
+
+    if (response.statusCode == 200) {
+      return {"success": true, "data": jsonDecode(response.body)};
+    } else {
+      return {
+        "success": false,
+        "message": jsonDecode(response.body)["message"] ?? "Unknown error",
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> getTrainById(String trainId) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse("$apiUrl/$trainId"),
+      headers: {
+        'Authorization': '$token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody.containsKey('train')) {
+        final Map<String, dynamic> train = responseBody['train'];
+        return {
+          "success": true,
+          "data": train,
+        };
+      } else {
+        return {
+          "success": false,
+          "message": "Train not found",
+        };
+      }
+    } else {
+      return {
+        "success": false,
+        "message": jsonDecode(response.body)["message"] ?? "Unknown error",
+      };
+    }
+  }
 }

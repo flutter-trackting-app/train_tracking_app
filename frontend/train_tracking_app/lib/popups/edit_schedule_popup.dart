@@ -3,13 +3,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:train_tracking_app/services/schedule_service.dart';
 
 class EditSchedulePopup extends StatefulWidget {
-  const EditSchedulePopup({super.key});
+  final String trainId;
+  const EditSchedulePopup({super.key, required this.trainId});
 
   @override
-  AddTrainPopupState createState() => AddTrainPopupState();
+  EditTrainPopupState createState() => EditTrainPopupState();
 }
 
-class AddTrainPopupState extends State<EditSchedulePopup> {
+class EditTrainPopupState extends State<EditSchedulePopup> {
   final ScheduleService _trainService = ScheduleService();
   final _formKey = GlobalKey<FormState>();
 
@@ -22,6 +23,42 @@ class AddTrainPopupState extends State<EditSchedulePopup> {
   final TextEditingController distanceController = TextEditingController();
 
   bool isDelayed = false;
+
+  // Fetch the train data when the popup opens
+  void _fetchTrainData() async {
+    final response = await _trainService.getTrainById(widget.trainId);
+
+    if (response["success"]) {
+      final trainData = response["data"];
+
+      setState(() {
+        nameController.text = trainData['name'] ?? '';
+        typeController.text = trainData['type'] ?? '';
+        originController.text = trainData['origin'] ?? '';
+        destinationController.text = trainData['destination'] ?? '';
+        departureTimeController.text = trainData['departureTime'] ?? '';
+        delayTimeController.text = trainData['delay_time']?.toString() ?? '';
+        distanceController.text = trainData['distance']?.toString() ?? '';
+        isDelayed = trainData['delayed'] ==
+            'true'; // Assuming 'true' or 'false' as string
+      });
+    } else {
+      Fluttertoast.showToast(
+        msg: response["message"] ?? "Failed to fetch train details",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch train data on initialization
+    _fetchTrainData();
+  }
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
@@ -62,7 +99,7 @@ class AddTrainPopupState extends State<EditSchedulePopup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text(
-        'Add Schedule',
+        'Edit Schedule',
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
       content: SingleChildScrollView(
