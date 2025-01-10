@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:train_tracking_app/login_page.dart';
+import 'package:train_tracking_app/services/auth_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -107,7 +108,7 @@ class SignUpPageState extends State<SignUpPage> {
                       'assets/images/tta_logo.png',
                     ),
                     // width: 200,
-                    height: 60,
+                    height: 70,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -282,7 +283,7 @@ class SignUpPageState extends State<SignUpPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
                         Fluttertoast.showToast(
                           msg: "Sign Up Successful",
@@ -291,6 +292,37 @@ class SignUpPageState extends State<SignUpPage> {
                           backgroundColor: Colors.green,
                           textColor: Colors.white,
                         );
+
+                        final authService = AuthService();
+                        final response = await authService.signUp(
+                            usernameController.text.trim(),
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                            "user");
+
+                        if (response["success"]) {
+                          Fluttertoast.showToast(
+                            msg: "Sign Up Successful",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                          );
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: response["message"] ?? "Signup failed",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

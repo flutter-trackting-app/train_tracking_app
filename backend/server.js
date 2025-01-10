@@ -1,4 +1,5 @@
 const authRoutes = require("./routes/authRoutes");
+const trainRoutes = require("./routes/trainRoutes");
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -14,6 +15,7 @@ app.use((req, res, next) => {
 app.use(cors());
 
 app.use("/api/v1", authRoutes);
+app.use("/api/v1/train", trainRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Express Firebase Auth API");
