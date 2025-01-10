@@ -15,80 +15,16 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<Map<String, dynamic>> trainSchedules = [];
+  List<dynamic> trainSchedules = [];
 
-  Future<void> fetchSchedules() async {
+  Future<List<dynamic>> fetchSchedules() async {
     final scheduleService = ScheduleService();
     final response = await scheduleService.getSchedules();
     await Future.delayed(Duration(seconds: 1));
 
     if (response["success"]) {
       List<dynamic> schedules = response["data"];
-      setState(() {
-        print("Setting schedules...");
-        trainSchedules = [
-          {
-            "delay_time": 16,
-            "delayed": "true",
-            "departureTime": "11.00pm",
-            "destination": "kandy",
-            "distance": 50,
-            "id": "-OGAYVK7aMIF32HEJNMO",
-            "name": "train2",
-            "origin": "mathara"
-          },
-          {
-            "delay_time": 50,
-            "delayed": "true",
-            "departureTime": "5.00pm",
-            "destination": "colombo",
-            "distance": 30,
-            "id": "-OGAcqQmaz7N4UidhHOw",
-            "name": "train1",
-            "origin": "galle"
-          },
-          {
-            "delay_time": "15",
-            "delayed": "true",
-            "departureTime": "08:00 AM",
-            "destination": "North Point",
-            "distance": "120",
-            "id": "-OGD0hsd5LEXk6YOQoj7",
-            "name": "Express Line 1",
-            "origin": "Central Station"
-          },
-          {
-            "delay_time": "",
-            "delayed": "false",
-            "departureTime": "8.00 AM",
-            "destination": "matara",
-            "distance": "10",
-            "id": "-OGD48MrtYCh8ZP60yR3",
-            "name": "test",
-            "origin": "galle"
-          },
-          {
-            "delay_time": "30",
-            "delayed": "true",
-            "departureTime": "10.00 AM",
-            "destination": "colombo",
-            "distance": "20",
-            "id": "-OGDMUu0C4g2kVr41iqh",
-            "name": "train 2",
-            "origin": "matara"
-          }
-        ];
-        // trainSchedules = schedules.map((schedule) {
-        //   return {
-        //     'name': schedule['name'],
-        //     'startTime': schedule['departureTime'],
-        //     'endTime': 'N/A',
-        //     'estimatedDeparture': schedule['departureTime'],
-        //     'delayed': schedule['delayed'],
-        //     'delay_time': schedule['delay_time'].toString(),
-        //   };
-        // }).toList();
-      });
+      return schedules;
     } else {
       Fluttertoast.showToast(
         msg: response["message"] ?? "Operation failed",
@@ -97,17 +33,27 @@ class HomePageState extends State<HomePage> {
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
+      return [];
     }
-  }
-
-  Future<SharedPreferences> getLocalStorage() async {
-    return SharedPreferences.getInstance();
   }
 
   @override
   void initState() {
     super.initState();
-    fetchSchedules();
+    // Fetch the schedules asynchronously
+    _loadSchedules();
+  }
+
+  // Function to load the schedules
+  Future<void> _loadSchedules() async {
+    List<dynamic> schedules = await fetchSchedules();
+    setState(() {
+      trainSchedules = schedules; // Update trainSchedules with the fetched data
+    });
+  }
+
+  Future<SharedPreferences> getLocalStorage() async {
+    return SharedPreferences.getInstance();
   }
 
   @override
@@ -294,7 +240,7 @@ class HomePageState extends State<HomePage> {
                                               ),
                                               const SizedBox(width: 5),
                                               Text(
-                                                train['delay_time']!,
+                                                train['delay_time'].toString()!,
                                                 style: const TextStyle(
                                                     color: Colors.redAccent),
                                               ),
@@ -305,17 +251,21 @@ class HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 15),
                                 Text(
-                                  'Start Time: ${train['startTime']}',
+                                  'Origin: ${train['origin']}',
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                                 Text(
-                                  'End Time: ${train['endTime']}',
+                                  'Destination: ${train['destination']}',
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                                 Text(
-                                  'Estimated Departure: ${train['estimatedDeparture']}',
+                                  'Start Time: ${train['departureTime']}',
                                   style: const TextStyle(color: Colors.grey),
                                 ),
+                                // Text(
+                                //   'End Time: ${train['endTime']}',
+                                //   style: const TextStyle(color: Colors.grey),
+                                // ),
                               ],
                             ),
                           ),

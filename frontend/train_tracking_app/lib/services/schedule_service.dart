@@ -40,14 +40,26 @@ class ScheduleService {
     );
 
     if (response.statusCode == 200) {
-      if (kDebugMode) {
-        print(jsonDecode(response.body));
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody.containsKey('trains')) {
+        final Map<String, dynamic> trains = responseBody['trains'];
+        List<Map<String, dynamic>> trainList = [];
+
+        trains.forEach((key, value) {
+          trainList.add(value);
+        });
+
+        return {"success": true, "data": trainList};
+      } else {
+        return {
+          "success": false,
+          "message": "No trains data found",
+        };
       }
-      return {"success": true, "data": jsonDecode(response.body)};
     } else {
       return {
         "success": false,
-        "message": jsonDecode(response.body)["message"]
+        "message": jsonDecode(response.body)["message"] ?? "Unknown error",
       };
     }
   }
