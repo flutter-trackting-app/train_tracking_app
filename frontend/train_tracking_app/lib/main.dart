@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         image: AssetImage(
                           'assets/images/tta_logo.png',
                         ),
-                        height: 70,
+                        height: 100,
                         fit: BoxFit.cover,
                       ),
                     ),

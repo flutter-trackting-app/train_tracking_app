@@ -24,7 +24,6 @@ class EditTrainPopupState extends State<EditSchedulePopup> {
 
   bool isDelayed = false;
 
-  // Fetch the train data when the popup opens
   void _fetchTrainData() async {
     final response = await _trainService.getTrainById(widget.trainId);
 
@@ -56,7 +55,6 @@ class EditTrainPopupState extends State<EditSchedulePopup> {
   @override
   void initState() {
     super.initState();
-    // Fetch train data on initialization
     _fetchTrainData();
   }
 
@@ -73,7 +71,8 @@ class EditTrainPopupState extends State<EditSchedulePopup> {
       };
 
       final scheduleService = ScheduleService();
-      final response = await scheduleService.addTrain(trainData);
+      final response =
+          await scheduleService.updateTrain(widget.trainId, trainData);
       if (response["success"]) {
         Navigator.pop(context);
         Fluttertoast.showToast(

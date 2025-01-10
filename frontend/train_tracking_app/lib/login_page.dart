@@ -85,7 +85,7 @@ class LoginPageState extends State<LoginPage> {
                       'assets/images/tta_logo.png',
                     ),
                     // width: 200,
-                    height: 60,
+                    height: 70,
                     fit: BoxFit.cover,
                   ),
                 ),

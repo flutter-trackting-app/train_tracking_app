@@ -6,6 +6,7 @@ import 'package:train_tracking_app/notifications_page.dart';
 import 'package:train_tracking_app/popups/add_schedule_popup.dart';
 import 'package:train_tracking_app/popups/edit_schedule_popup.dart';
 import 'package:train_tracking_app/services/schedule_service.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -182,9 +183,13 @@ class HomePageState extends State<HomePage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.settings),
-                    title: const Text('Settings'),
+                    title: const Text('Log out'),
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
                     },
                   ),
                 ],
