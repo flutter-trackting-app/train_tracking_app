@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
-        textTheme: GoogleFonts.poppinsTextTheme(),
+        textTheme: GoogleFonts.interTextTheme(),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -58,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         image: AssetImage(
                           'assets/images/tta_logo.png',
                         ),
-                        // width: 200,
                         height: 70,
                         fit: BoxFit.cover,
                       ),
